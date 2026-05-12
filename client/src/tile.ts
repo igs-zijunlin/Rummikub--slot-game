@@ -11,7 +11,7 @@ const COLOR_MAP: Record<string, number> = {
 export const TILE_W = 90;
 export const TILE_H = 120;
 
-const JOKER_URL = `${import.meta.env.BASE_URL}joker-face.svg`;
+const JOKER_URL = `${import.meta.env.BASE_URL}joker-face.png`;
 let jokerTexture: Texture = Texture.EMPTY;
 
 export async function loadTileAssets(): Promise<void> {
