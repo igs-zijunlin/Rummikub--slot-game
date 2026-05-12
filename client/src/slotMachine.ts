@@ -16,6 +16,7 @@ export class SlotMachine {
   private reels: Reel[] = [];
   private spinning = false;
   private highlightGraphics: Graphics[] = [];
+  turboMode = false;
 
   constructor() {
     // Create mask for reel area
@@ -43,7 +44,7 @@ export class SlotMachine {
   get height() { return ROWS * CELL_H - GAP; }
 
   async spin(bet: number): Promise<SpinResult> {
-    if (this.spinning) return { grid: [], winPositions: [], winAmount: 0 };
+    if (this.spinning) return { grid: [], combos: [], winPositions: [], winAmount: 0 };
     this.spinning = true;
     this.clearHighlights();
 
@@ -51,7 +52,7 @@ export class SlotMachine {
 
     // Spin all reels with staggered delay
     await Promise.all(
-      this.reels.map((reel, i) => reel.spin(result.grid[i], i))
+      this.reels.map((reel, i) => reel.spin(result.grid[i], i, this.turboMode))
     );
 
     this.spinning = false;

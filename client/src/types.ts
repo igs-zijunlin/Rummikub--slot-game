@@ -12,8 +12,14 @@ export interface JokerTile {
 
 export type SlotTile = Tile | JokerTile;
 
+export interface Combo {
+  type: 'group' | 'run';
+  positions: [number, number][]; // [reel, row] pairs
+}
+
 export interface SpinResult {
   grid: SlotTile[][]; // 5 reels × 3 rows
-  winPositions: [number, number][]; // [reel, row] pairs
+  combos: Combo[];
+  winPositions: [number, number][]; // flattened from combos for highlight
   winAmount: number;
 }

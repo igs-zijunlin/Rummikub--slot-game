@@ -29,12 +29,12 @@ export class Reel {
     });
   }
 
-  async spin(finalTiles: SlotTile[], delay: number): Promise<void> {
+  async spin(finalTiles: SlotTile[], delay: number, turbo = false): Promise<void> {
     if (this.spinning) return;
     this.spinning = true;
 
     // Build extended strip: random tiles + final tiles at bottom
-    const extendedCount = 6;
+    const extendedCount = turbo ? 3 : 6;
     const randomTiles = generateGrid().flat();
     const allTiles = [...randomTiles.slice(0, extendedCount), ...finalTiles];
 
@@ -51,11 +51,15 @@ export class Reel {
     this.strip.y = 0;
     const targetY = -(extendedCount * CELL_H);
 
+    // Turbo: all reels finish within ~1s total (duration 0.15 + stagger 0.02)
+    const duration = turbo ? 0.15 + delay * 0.02 : 0.4 + delay * 0.08;
+    const stagger = turbo ? delay * 0.01 : delay * 0.06;
+
     await gsap.to(this.strip, {
       y: targetY,
-      duration: 0.4 + delay * 0.08,
-      ease: 'power2.out',
-      delay: delay * 0.06,
+      duration,
+      ease: turbo ? 'power1.out' : 'power2.out',
+      delay: stagger,
     });
 
     // Clean up: keep only final tiles, reset position

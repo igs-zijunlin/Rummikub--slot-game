@@ -6,7 +6,18 @@
   <title>Rummikub Slot</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background:
+        radial-gradient(ellipse at center, #1b5e20 0%, #0d3310 70%, #061a08 100%);
+    }
+    /* Felt noise texture overlay */
+    html::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23000' opacity='0.03'/%3E%3Crect x='1' y='1' width='1' height='1' fill='%23fff' opacity='0.02'/%3E%3Crect x='3' y='0' width='1' height='1' fill='%23fff' opacity='0.015'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
     #app { width: 100%; height: 100%; }
   </style>
 </head>
