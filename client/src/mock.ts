@@ -1,8 +1,9 @@
 import type { SlotTile, SpinResult, TileColor, Combo } from './types';
 
 const COLORS: TileColor[] = ['red', 'blue', 'yellow', 'black'];
+const P_SCATTER_BASE = 0.028;
 
-/** 作弊 flag：下一次 spin 強制觸發 Free Game */
+/** 作弊 flag */
 export let forceFreeTrigger = false;
 export function setForceFreeTrigger(val: boolean) { forceFreeTrigger = val; }
 
@@ -17,21 +18,42 @@ export function generateGrid(): SlotTile[][] {
 
 export function mockSpin(bet: number): SpinResult {
   const grid = generateGrid();
+  let scatterCount = 0;
 
-  // 作弊模式：強制在 3 個位置放入 scatter（用 joker 代替顯示）
-  if (forceFreeTrigger) {
-    forceFreeTrigger = false;
-    const scatterPositions: [number, number][] = [[0, 0], [2, 1], [4, 2]];
-    for (const [reel, row] of scatterPositions) {
-      grid[reel][row] = { color: 'joker', number: 0 };
+  // 正常 scatter 判定（每格 2.8% 機率）
+  const scatterPositions: [number, number][] = [];
+  for (let reel = 0; reel < 5; reel++) {
+    for (let row = 0; row < 3; row++) {
+      if (Math.random() < P_SCATTER_BASE) {
+        scatterPositions.push([reel, row]);
+      }
     }
   }
-  const combos: Combo[] = [];
 
+  // 作弊模式：強制 3 個 scatter
+  if (forceFreeTrigger) {
+    forceFreeTrigger = false;
+    while (scatterPositions.length < 3) {
+      const reel = Math.floor(Math.random() * 5);
+      const row = Math.floor(Math.random() * 3);
+      const key = `${reel},${row}`;
+      if (!scatterPositions.some(([r, ro]) => `${r},${ro}` === key)) {
+        scatterPositions.push([reel, row]);
+      }
+    }
+  }
+
+  // 放入 scatter（用 joker 顯示）
+  for (const [reel, row] of scatterPositions) {
+    grid[reel][row] = { color: 'joker', number: 0 };
+  }
+  scatterCount = scatterPositions.length;
+
+  // 組合判定（排除 scatter 位置）
+  const combos: Combo[] = [];
   for (let row = 0; row < 3; row++) {
     const tiles = grid.map(reel => reel[row]);
 
-    // Check for GROUP: 3+ consecutive reels with same number, different colors, max 1 joker
     let foundCombo = false;
     for (let start = 0; start <= 2 && !foundCombo; start++) {
       const group: [number, number][] = [];
@@ -42,11 +64,10 @@ export function mockSpin(bet: number): SpinResult {
       for (let i = start; i < 5; i++) {
         const t = tiles[i];
         if (t.color === 'joker') {
-          if (jokerUsed) break; // max 1 joker
+          if (jokerUsed) break;
           jokerUsed = true;
           group.push([i, row]);
         } else if (targetNum === -1) {
-          // First real tile sets the target number
           targetNum = t.number;
           usedColors.add(t.color);
           group.push([i, row]);
@@ -63,7 +84,6 @@ export function mockSpin(bet: number): SpinResult {
       }
     }
 
-    // Check for RUN: 3+ consecutive reels with consecutive numbers, same color, max 1 joker
     if (!foundCombo) {
       for (let start = 0; start <= 2; start++) {
         const startTile = tiles[start];
@@ -95,5 +115,5 @@ export function mockSpin(bet: number): SpinResult {
 
   const winPositions = combos.flatMap(c => c.positions);
   const winAmount = combos.length > 0 ? bet * (winPositions.length * 2) : 0;
-  return { grid, combos, winPositions, winAmount };
+  return { grid, combos, winPositions, winAmount, scatterCount };
 }

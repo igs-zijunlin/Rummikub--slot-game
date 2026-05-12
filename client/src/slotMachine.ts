@@ -44,7 +44,7 @@ export class SlotMachine {
   get height() { return ROWS * CELL_H - GAP; }
 
   async spin(bet: number): Promise<SpinResult> {
-    if (this.spinning) return { grid: [], combos: [], winPositions: [], winAmount: 0 };
+    if (this.spinning) return { grid: [], combos: [], winPositions: [], winAmount: 0, scatterCount: 0 };
     this.spinning = true;
     this.clearHighlights();
 

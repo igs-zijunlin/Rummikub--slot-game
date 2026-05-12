@@ -3,6 +3,7 @@ import { SlotMachine } from './slotMachine';
 import { HUD } from './hud';
 import { loadTileAssets } from './tile';
 import { setForceFreeTrigger } from './mock';
+import { FreeGameController } from './freeGameController';
 
 async function main() {
   const app = new Application();
@@ -39,6 +40,11 @@ async function main() {
   const machine = new SlotMachine();
   app.stage.addChild(machine.container);
 
+  // Free Game controller
+  const fgController = new FreeGameController(
+    app.stage, machine.container, app.screen.width, app.screen.height
+  );
+
   // HUD
   const hud = new HUD(async () => {
     if (machine.isSpinning) return;
@@ -54,6 +60,15 @@ async function main() {
     hud.win = result.winAmount;
     hud.balance += result.winAmount;
     hud.updateDisplay();
+
+    // Check Free Game trigger
+    if (result.scatterCount >= 3) {
+      const fgWin = await fgController.run(hud.bet, result.scatterCount);
+      hud.win += fgWin;
+      hud.balance += fgWin;
+      hud.updateDisplay();
+    }
+
     hud.setEnabled(true);
   }, (turbo) => {
     machine.turboMode = turbo;
@@ -110,16 +125,12 @@ async function main() {
     const fh = scaledH + pad * 2;
 
     frame.clear();
-    // Outer glow
     frame.roundRect(fx - 4, fy - 4, fw + 8, fh + 8, 14);
     frame.fill({ color: 0xffd700, alpha: 0.1 });
-    // Dark inset
     frame.roundRect(fx, fy, fw, fh, 10);
     frame.fill({ color: 0x0a2e0a, alpha: 0.6 });
-    // Gold border
     frame.roundRect(fx, fy, fw, fh, 10);
     frame.stroke({ color: 0xffd700, width: 3, alpha: 0.8 });
-    // Inner gold line
     frame.roundRect(fx + 6, fy + 6, fw - 12, fh - 12, 6);
     frame.stroke({ color: 0xffd700, width: 1, alpha: 0.3 });
 
@@ -128,6 +139,9 @@ async function main() {
     hud.container.x = (w - scaledW) / 2;
     hud.container.y = hudY;
     hud.layout(scaledW);
+
+    // Free Game HUD & controller layout
+    fgController.updateLayout(w, h, (w - scaledW) / 2, machine.container.y, scaledW);
 
     // Cheat button 右上角
     cheatBtn.x = w - 30;

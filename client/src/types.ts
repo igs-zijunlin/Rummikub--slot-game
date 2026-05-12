@@ -22,4 +22,5 @@ export interface SpinResult {
   combos: Combo[];
   winPositions: [number, number][]; // flattened from combos for highlight
   winAmount: number;
+  scatterCount: number;
 }
