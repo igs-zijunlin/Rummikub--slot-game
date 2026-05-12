@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite, Text, Texture } from 'pixi.js';
+import { Assets, Container, Graphics, Sprite, Text, Texture } from 'pixi.js';
 import type { SlotTile } from './types';
 
 const COLOR_MAP: Record<string, number> = {
@@ -11,8 +11,12 @@ const COLOR_MAP: Record<string, number> = {
 export const TILE_W = 90;
 export const TILE_H = 120;
 
-// Pre-load joker texture
-const jokerTexture = Texture.from(`${import.meta.env.BASE_URL}joker-face.svg`);
+const JOKER_URL = `${import.meta.env.BASE_URL}joker-face.svg`;
+let jokerTexture: Texture = Texture.EMPTY;
+
+export async function loadTileAssets(): Promise<void> {
+  jokerTexture = await Assets.load(JOKER_URL);
+}
 
 export function createTileSprite(tile: SlotTile): Container {
   const container = new Container();

@@ -1,6 +1,7 @@
 import { Application, Graphics, Text } from 'pixi.js';
 import { SlotMachine } from './slotMachine';
 import { HUD } from './hud';
+import { loadTileAssets } from './tile';
 
 async function main() {
   const app = new Application();
@@ -11,6 +12,9 @@ async function main() {
   });
 
   document.getElementById('app')!.appendChild(app.canvas);
+
+  // Load assets
+  await loadTileAssets();
 
   // Decorative gold frame
   const frame = new Graphics();
