@@ -50,6 +50,7 @@ export class SlotMachine {
     this.clearHighlights();
 
     audio.play('spin-start');
+    audio.play('reel-spin', { loop: true });
 
     const result = mockSpin(bet);
 
@@ -58,6 +59,7 @@ export class SlotMachine {
       this.reels.map((reel, i) => reel.spin(result.grid[i], i, this.turboMode))
     );
 
+    audio.stop('reel-spin');
     audio.play('reel-stop');
 
     // Play scatter land sound if scatters present

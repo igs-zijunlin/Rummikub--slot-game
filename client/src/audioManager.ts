@@ -88,14 +88,23 @@ class AudioManager {
     document.addEventListener('click', unlock, true);
   }
 
-  play(id: SfxId, opts?: { rate?: number; volume?: number }): void {
+  play(id: SfxId, opts?: { rate?: number; volume?: number; loop?: boolean }): void {
     if (this.muted) return;
     if (this.turboMode && !TURBO_ALLOWED.has(id)) return;
     const sound = this.sfx.get(id);
     if (!sound) return;
+    if (opts?.loop) sound.loop(true);
     const playId = sound.play();
     if (opts?.rate) sound.rate(opts.rate, playId);
     if (opts?.volume !== undefined) sound.volume(opts.volume, playId);
+  }
+
+  stop(id: SfxId): void {
+    const sound = this.sfx.get(id);
+    if (!sound) return;
+    sound.loop(false);
+    sound.fade(sound.volume(), 0, 150);
+    setTimeout(() => sound.stop(), 150);
   }
 
   playCascade(level: number): void {
