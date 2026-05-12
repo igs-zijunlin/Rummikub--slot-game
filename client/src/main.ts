@@ -67,6 +67,7 @@ async function main() {
       hud.win += fgWin;
       hud.balance += fgWin;
       hud.updateDisplay();
+      machine.refresh();
     }
 
     hud.setEnabled(true);

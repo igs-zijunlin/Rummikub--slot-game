@@ -76,6 +76,9 @@ export class FreeGameController {
       this.cascadeOverlay = null;
     }
 
+    // Clean up all FG tile sprites
+    this.cleanup();
+
     // Hide HUD
     this.hud.hide();
 
@@ -182,6 +185,15 @@ export class FreeGameController {
       }
       this.tileContainers.push(colContainers);
     }
+  }
+
+  private cleanup() {
+    for (const col of this.tileContainers) {
+      for (const tile of col) {
+        tile.destroy();
+      }
+    }
+    this.tileContainers = [];
   }
 
   private delay(seconds: number): Promise<void> {

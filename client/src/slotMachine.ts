@@ -99,4 +99,10 @@ export class SlotMachine {
   }
 
   get isSpinning() { return this.spinning; }
+
+  /** Re-render current reel state (used after Free Game cleanup) */
+  refresh() {
+    const grid = generateGrid();
+    this.reels.forEach((reel, i) => reel.setTiles(grid[i]));
+  }
 }
