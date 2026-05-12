@@ -2,6 +2,10 @@ import type { SlotTile, SpinResult, TileColor, Combo } from './types';
 
 const COLORS: TileColor[] = ['red', 'blue', 'yellow', 'black'];
 
+/** 作弊 flag：下一次 spin 強制觸發 Free Game */
+export let forceFreeTrigger = false;
+export function setForceFreeTrigger(val: boolean) { forceFreeTrigger = val; }
+
 function randomTile(): SlotTile {
   if (Math.random() < 0.05) return { color: 'joker', number: 0 };
   return { color: COLORS[Math.floor(Math.random() * 4)], number: Math.floor(Math.random() * 13) + 1 };
@@ -13,6 +17,15 @@ export function generateGrid(): SlotTile[][] {
 
 export function mockSpin(bet: number): SpinResult {
   const grid = generateGrid();
+
+  // 作弊模式：強制在 3 個位置放入 scatter（用 joker 代替顯示）
+  if (forceFreeTrigger) {
+    forceFreeTrigger = false;
+    const scatterPositions: [number, number][] = [[0, 0], [2, 1], [4, 2]];
+    for (const [reel, row] of scatterPositions) {
+      grid[reel][row] = { color: 'joker', number: 0 };
+    }
+  }
   const combos: Combo[] = [];
 
   for (let row = 0; row < 3; row++) {

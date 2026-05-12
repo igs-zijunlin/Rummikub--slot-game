@@ -2,6 +2,7 @@ import { Application, Graphics, Text } from 'pixi.js';
 import { SlotMachine } from './slotMachine';
 import { HUD } from './hud';
 import { loadTileAssets } from './tile';
+import { setForceFreeTrigger } from './mock';
 
 async function main() {
   const app = new Application();
@@ -59,6 +60,20 @@ async function main() {
   });
   app.stage.addChild(hud.container);
 
+  // Cheat button (右上角，測試用)
+  const cheatBtn = new Text({
+    text: 'FG',
+    style: { fontFamily: 'monospace', fontSize: 12, fill: 0x666666 },
+  });
+  cheatBtn.eventMode = 'static';
+  cheatBtn.cursor = 'pointer';
+  cheatBtn.on('pointerdown', () => {
+    setForceFreeTrigger(true);
+    cheatBtn.style.fill = 0xff4444;
+    setTimeout(() => { cheatBtn.style.fill = 0x666666; }, 1000);
+  });
+  app.stage.addChild(cheatBtn);
+
   // Responsive layout
   function resize() {
     const w = app.screen.width;
@@ -113,6 +128,10 @@ async function main() {
     hud.container.x = (w - scaledW) / 2;
     hud.container.y = hudY;
     hud.layout(scaledW);
+
+    // Cheat button 右上角
+    cheatBtn.x = w - 30;
+    cheatBtn.y = 5;
   }
 
   resize();
