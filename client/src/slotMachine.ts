@@ -81,9 +81,9 @@ export class SlotMachine {
       // Pulsing animation
       gsap.to(glow, {
         alpha: 0.3,
-        duration: 0.4,
+        duration: 0.25,
         yoyo: true,
-        repeat: 5,
+        repeat: 3,
         ease: 'sine.inOut',
       });
     }

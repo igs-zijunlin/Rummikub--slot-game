@@ -34,7 +34,7 @@ export class Reel {
     this.spinning = true;
 
     // Build extended strip: random tiles + final tiles at bottom
-    const extendedCount = 12;
+    const extendedCount = 6;
     const randomTiles = generateGrid().flat();
     const allTiles = [...randomTiles.slice(0, extendedCount), ...finalTiles];
 
@@ -53,9 +53,9 @@ export class Reel {
 
     await gsap.to(this.strip, {
       y: targetY,
-      duration: 0.8 + delay,
-      ease: 'back.out(0.5)',
-      delay: delay * 0.15,
+      duration: 0.4 + delay * 0.08,
+      ease: 'power2.out',
+      delay: delay * 0.06,
     });
 
     // Clean up: keep only final tiles, reset position
