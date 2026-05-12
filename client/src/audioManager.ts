@@ -1,7 +1,8 @@
 import { Howl, Howler } from 'howler';
 
-const SFX_PATH = '/audio/sfx/';
-const BGM_PATH = '/audio/bgm/';
+const BASE = import.meta.env.BASE_URL;
+const SFX_PATH = `${BASE}audio/sfx/`;
+const BGM_PATH = `${BASE}audio/bgm/`;
 
 const SFX_LIST = [
   'spin-start', 'reel-spin', 'reel-stop',
@@ -40,15 +41,19 @@ class AudioManager {
         src: [`${SFX_PATH}${id}.mp3`],
         preload: true,
         volume: id === 'btn-click' || id === 'fall' ? 0.4 : 0.6,
+        onloaderror: (_i, e) => console.warn(`[audio] SFX load error: ${id}`, e),
+        onplayerror: (_i, e) => console.warn(`[audio] SFX play error: ${id}`, e),
       }));
     }
     for (const id of BGM_LIST) {
       this.bgm.set(id, new Howl({
         src: [`${BGM_PATH}${id}.mp3`],
         preload: true,
-        html5: true, // Use HTML5 Audio for BGM on iOS (lower memory, streams)
+        html5: true,
         loop: true,
         volume: 0,
+        onloaderror: (_i, e) => console.warn(`[audio] BGM load error: ${id}`, e),
+        onplayerror: (_i, e) => console.warn(`[audio] BGM play error: ${id}`, e),
       }));
     }
     this.setupIOSUnlock();
