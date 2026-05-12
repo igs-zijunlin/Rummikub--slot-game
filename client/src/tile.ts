@@ -12,7 +12,7 @@ export const TILE_W = 90;
 export const TILE_H = 120;
 
 // Pre-load joker texture
-const jokerTexture = Texture.from('/joker-face.svg');
+const jokerTexture = Texture.from(`${import.meta.env.BASE_URL}joker-face.svg`);
 
 export function createTileSprite(tile: SlotTile): Container {
   const container = new Container();
