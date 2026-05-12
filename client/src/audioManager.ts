@@ -32,6 +32,7 @@ class AudioManager {
   private currentBgm: BgmId | null = null;
   private muted = false;
   private turboMode = false;
+  private unlocked = false;
 
   preload(): void {
     for (const id of SFX_LIST) {
@@ -45,10 +46,41 @@ class AudioManager {
       this.bgm.set(id, new Howl({
         src: [`${BGM_PATH}${id}.mp3`],
         preload: true,
+        html5: true, // Use HTML5 Audio for BGM on iOS (lower memory, streams)
         loop: true,
         volume: 0,
       }));
     }
+    this.setupIOSUnlock();
+  }
+
+  /**
+   * iOS Safari requires AudioContext to be resumed inside a user gesture.
+   * This listens for the first touch/click and unlocks the audio context.
+   */
+  private setupIOSUnlock(): void {
+    const unlock = () => {
+      if (this.unlocked) return;
+      // Resume Howler's AudioContext (Web Audio API)
+      const ctx = Howler.ctx;
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      // Play a silent buffer to fully unlock iOS audio
+      const silentSound = new Howl({
+        src: ['data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwMHAAAAAAD/+1DEAAAB8ANoAAAAIAAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7UMQbAAAA0gAAAAAA0gAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ=='],
+        volume: 0,
+        onend: () => silentSound.unload(),
+      });
+      silentSound.play();
+      this.unlocked = true;
+      document.removeEventListener('touchstart', unlock, true);
+      document.removeEventListener('touchend', unlock, true);
+      document.removeEventListener('click', unlock, true);
+    };
+    document.addEventListener('touchstart', unlock, true);
+    document.addEventListener('touchend', unlock, true);
+    document.addEventListener('click', unlock, true);
   }
 
   play(id: SfxId, opts?: { rate?: number; volume?: number }): void {
