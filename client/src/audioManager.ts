@@ -103,8 +103,7 @@ class AudioManager {
     const sound = this.sfx.get(id);
     if (!sound) return;
     sound.loop(false);
-    sound.fade(sound.volume(), 0, 150);
-    setTimeout(() => sound.stop(), 150);
+    sound.stop();
   }
 
   playCascade(level: number): void {
