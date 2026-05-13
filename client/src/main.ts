@@ -5,6 +5,9 @@ import { loadTileAssets } from './tile';
 import { setForceFreeTrigger } from './mock';
 import { FreeGameController } from './freeGameController';
 
+declare const __COMMIT_HASH__: string;
+declare const __BUILD_TIME__: string;
+
 async function main() {
   const app = new Application();
   await app.init({
@@ -90,6 +93,14 @@ async function main() {
   });
   app.stage.addChild(cheatBtn);
 
+  // Version info (左下角)
+  const versionText = new Text({
+    text: `v.${__COMMIT_HASH__} | ${__BUILD_TIME__}`,
+    style: { fontFamily: 'monospace', fontSize: 10, fill: 0x555555 },
+  });
+  versionText.alpha = 0.6;
+  app.stage.addChild(versionText);
+
   // Responsive layout
   function resize() {
     const w = app.screen.width;
@@ -147,6 +158,10 @@ async function main() {
     // Cheat button 右上角
     cheatBtn.x = w - 30;
     cheatBtn.y = 5;
+
+    // Version info 左下角
+    versionText.x = 5;
+    versionText.y = h - 16;
   }
 
   resize();
