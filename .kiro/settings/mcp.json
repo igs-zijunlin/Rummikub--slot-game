@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "agend-拉密slot-音效-t1503767051741696070": {
+      "command": "/home/zijunlin/.agend/instances/拉密slot-音效-t1503767051741696070/mcp-wrapper-agend.sh",
+      "args": []
+    }
+  }
+}

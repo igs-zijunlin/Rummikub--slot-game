@@ -11,6 +11,7 @@ import {
 } from './freeGameAnims';
 import { playTriggerScreen, FreeGameHUD, playSettlementScreen } from './freeGameUI';
 import { createFGTileSprite, TILE_W, TILE_H } from './tile';
+import { audio } from './audioManager';
 
 const GAP = 8;
 const CELL_W = TILE_W + GAP;
@@ -51,6 +52,8 @@ export class FreeGameController {
 
     // Show trigger screen
     await playTriggerScreen(this.parent, trigger.rounds, this.screenW, this.screenH);
+    audio.play('trigger');
+    audio.playBgm('free-game-normal');
 
     // Execute engine (pre-compute all rounds)
     const result = executeFreeGame(bet, trigger.rounds);
@@ -83,6 +86,7 @@ export class FreeGameController {
     this.hud.hide();
 
     // Settlement screen
+    audio.play('summary-coin');
     await playSettlementScreen(this.parent, result.totalWin, bet, this.screenW, this.screenH);
 
     return result.totalWin;
@@ -110,19 +114,30 @@ export class FreeGameController {
 
       // Play elimination animation
       await playEliminateAnim(this.machineContainer, step.eliminatedPositions, this.tileContainers);
+      audio.play('break');
 
       // Golden joker sticky effect
       for (const [col, row] of step.winPositions) {
         if (step.grid[col][row].kind === 'golden_joker') {
           const tile = this.tileContainers[col]?.[row];
-          if (tile) await playGoldenJokerStickyEffect(tile);
+          if (tile) {
+            audio.play('golden-joker');
+            await playGoldenJokerStickyEffect(tile);
+          }
         }
       }
 
       // Play chain multiplier animation
+      audio.playCascade(step.cascadeCount);
+      audio.play('mult-up');
       await playChainMultiplierAnim(
         this.parent, step.multiplier, step.cascadeCount, this.machineContainer
       );
+
+      // Switch to intense BGM at cascade 5+
+      if (step.cascadeCount >= 5) {
+        audio.playBgm('free-game-intense', 0.5);
+      }
 
       // Background effect for cascade 4+
       if (this.cascadeOverlay) {
@@ -133,6 +148,7 @@ export class FreeGameController {
       this.renderGrid(step.newGrid);
 
       // Play drop animation for new tiles
+      audio.play('fall');
       for (const [col, row] of step.newTilePositions) {
         const tile = this.tileContainers[col]?.[row];
         if (tile) {

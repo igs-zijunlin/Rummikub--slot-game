@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120">
+  <!-- Jester hat with three points and bells -->
+  <path d="M50 18 C40 18 32 22 28 28 L22 14 C20 10 18 10 17 12 L16 16 C16 18 17 19 19 19" fill="#e63946" stroke="#222" stroke-width="1.2"/>
+  <path d="M50 18 C60 18 68 22 72 28 L78 14 C80 10 82 10 83 12 L84 16 C84 18 83 19 81 19" fill="#1d3557" stroke="#222" stroke-width="1.2"/>
+  <path d="M50 18 L50 6 C50 3 49 2 48 4 L47 8 C47 9 48 10 50 10" fill="#f4a261" stroke="#222" stroke-width="1.2"/>
+  <!-- Bells at hat tips -->
+  <circle cx="16" cy="17" r="3" fill="#ffd700" stroke="#222" stroke-width="0.8"/>
+  <circle cx="84" cy="17" r="3" fill="#ffd700" stroke="#222" stroke-width="0.8"/>
+  <circle cx="48" cy="7" r="3" fill="#ffd700" stroke="#222" stroke-width="0.8"/>
+  <!-- Face circle -->
+  <circle cx="50" cy="58" r="30" fill="#fff5e1" stroke="#222" stroke-width="2"/>
+  <!-- Eyes - playful asymmetric -->
+  <ellipse cx="40" cy="52" rx="4.5" ry="5" fill="#222"/>
+  <ellipse cx="60" cy="52" rx="4.5" ry="5" fill="#222"/>
+  <!-- Eye highlights -->
+  <circle cx="41.5" cy="50.5" r="1.5" fill="#fff"/>
+  <circle cx="61.5" cy="50.5" r="1.5" fill="#fff"/>
+  <!-- Rosy cheeks -->
+  <circle cx="34" cy="62" r="4" fill="#ffb3b3" opacity="0.6"/>
+  <circle cx="66" cy="62" r="4" fill="#ffb3b3" opacity="0.6"/>
+  <!-- Wide grin -->
+  <path d="M36 66 Q43 78 50 78 Q57 78 64 66" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Nose - small triangle -->
+  <path d="M50 56 L47 62 L53 62 Z" fill="#e63946" stroke="#222" stroke-width="0.8"/>
+  <!-- Collar ruffles -->
+  <path d="M28 86 Q32 82 36 86 Q40 82 44 86 Q48 82 52 86 Q56 82 60 86 Q64 82 68 86 Q72 82 76 86" fill="none" stroke="#222" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Diamond patterns on collar -->
+  <path d="M38 92 L42 88 L46 92 L42 96 Z" fill="#e63946" stroke="#222" stroke-width="0.6"/>
+  <path d="M54 92 L58 88 L62 92 L58 96 Z" fill="#1d3557" stroke="#222" stroke-width="0.6"/>
+  <!-- JOKER text at bottom -->
+  <text x="50" y="114" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="bold" fill="#222">JOKER</text>
+</svg>

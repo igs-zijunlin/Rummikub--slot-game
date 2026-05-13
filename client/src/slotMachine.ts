@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { Reel } from './reel';
 import { TILE_W, TILE_H } from './tile';
 import { generateGrid, mockSpin } from './mock';
+import { audio } from './audioManager';
 import type { SpinResult } from './types';
 
 const REELS = 5;
@@ -48,12 +49,23 @@ export class SlotMachine {
     this.spinning = true;
     this.clearHighlights();
 
+    audio.play('spin-start');
+    audio.play('reel-spin', { loop: true });
+
     const result = mockSpin(bet);
 
     // Spin all reels with staggered delay
     await Promise.all(
       this.reels.map((reel, i) => reel.spin(result.grid[i], i, this.turboMode))
     );
+
+    audio.stop('reel-spin');
+    audio.play('reel-stop');
+
+    // Play scatter land sound if scatters present
+    if (result.scatterCount > 0) {
+      audio.play('scatter-land');
+    }
 
     this.spinning = false;
 

@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "pixi.js": "8.6.6",
-    "gsap": "3.12.7"
+    "gsap": "3.12.7",
+    "howler": "^2.2.4",
+    "pixi.js": "8.6.6"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.11",
     "typescript": "5.7.3",
     "vite": "6.3.5"
   }
