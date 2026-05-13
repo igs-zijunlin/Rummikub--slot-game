@@ -4,6 +4,7 @@ import { HUD } from './hud';
 import { loadTileAssets } from './tile';
 import { setForceFreeTrigger } from './mock';
 import { FreeGameController } from './freeGameController';
+import { audio } from './audioManager';
 
 declare const __COMMIT_HASH__: string;
 declare const __BUILD_TIME__: string;
@@ -20,6 +21,9 @@ async function main() {
 
   // Load assets
   await loadTileAssets();
+
+  // Preload audio
+  audio.preload();
 
   // Decorative gold frame
   const frame = new Graphics();
@@ -57,8 +61,16 @@ async function main() {
     hud.win = 0;
     hud.updateDisplay();
     hud.setEnabled(false);
+    audio.play('btn-click');
 
     const result = await machine.spin(hud.bet);
+
+    if (result.winAmount > 0) {
+      const ratio = result.winAmount / hud.bet;
+      if (ratio >= 20) audio.play('win-big');
+      else if (ratio >= 5) audio.play('win-medium');
+      else audio.play('win-small');
+    }
 
     hud.win = result.winAmount;
     hud.balance += result.winAmount;
@@ -71,11 +83,14 @@ async function main() {
       hud.balance += fgWin;
       hud.updateDisplay();
       machine.refresh();
+      audio.playBgm('base-game');
     }
 
     hud.setEnabled(true);
   }, (turbo) => {
     machine.turboMode = turbo;
+    audio.setTurbo(turbo);
+    audio.play('turbo-toggle');
   });
   app.stage.addChild(hud.container);
 
@@ -100,6 +115,13 @@ async function main() {
   });
   versionText.alpha = 0.6;
   app.stage.addChild(versionText);
+
+  // Start BGM on first user interaction (browser autoplay policy)
+  const startBgm = () => {
+    audio.playBgm('base-game');
+    document.removeEventListener('pointerdown', startBgm);
+  };
+  document.addEventListener('pointerdown', startBgm);
 
   // Responsive layout
   function resize() {
