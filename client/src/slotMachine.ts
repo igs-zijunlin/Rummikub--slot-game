@@ -58,6 +58,7 @@ export class SlotMachine {
       this.reels.map((reel, i) => reel.spin(result.grid[i], i, this.turboMode))
     );
 
+    audio.stop('spin-start');
     audio.play('reel-stop');
 
     // Play scatter land sound if scatters present
