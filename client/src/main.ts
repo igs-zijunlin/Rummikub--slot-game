@@ -78,7 +78,9 @@ async function main() {
 
     // Check Free Game trigger
     if (result.scatterCount >= 3) {
+      title.visible = false;
       const fgWin = await fgController.run(hud.bet, result.scatterCount);
+      title.visible = true;
       hud.win += fgWin;
       hud.balance += fgWin;
       hud.updateDisplay();
