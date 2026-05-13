@@ -150,23 +150,34 @@ export class FreeGameHUD {
   }
 
   update(roundsRemaining: number, roundsTotal: number, multiplier: number, totalWin: number) {
-    this.roundsText.text = `🎲 回合：${roundsRemaining} / ${roundsTotal}`;
-    this.multiplierText.text = `⚡ 倍率：×${multiplier}`;
-    this.winText.text = `💰 累計：${totalWin}`;
+    this.roundsText.text = `🎲 ${roundsRemaining}/${roundsTotal}`;
+    this.multiplierText.text = `⚡ ×${multiplier}`;
+    this.winText.text = `💰 ${totalWin}`;
   }
 
   layout(width: number) {
+    const s = Math.min(width / 490, 1);
+    const fontSize = Math.max(11, Math.round(14 * s));
+    const h = Math.max(24, Math.round(30 * s));
+
     this.bgGraphics.clear();
-    this.bgGraphics.roundRect(0, 0, width, 32, 6);
+    this.bgGraphics.roundRect(0, 0, width, h, 5);
     this.bgGraphics.fill({ color: 0x1a0033, alpha: 0.8 });
-    this.bgGraphics.roundRect(0, 0, width, 32, 6);
+    this.bgGraphics.roundRect(0, 0, width, h, 5);
     this.bgGraphics.stroke({ color: 0xffd700, width: 1.5, alpha: 0.6 });
 
-    // Distribute text evenly
+    this.roundsText.style.fontSize = fontSize;
+    this.multiplierText.style.fontSize = fontSize;
+    this.winText.style.fontSize = fontSize;
+
     const third = width / 3;
-    this.roundsText.x = 10;
-    this.multiplierText.x = third + 10;
-    this.winText.x = third * 2 + 10;
+    const textY = (h - fontSize) / 2;
+    this.roundsText.x = 6;
+    this.roundsText.y = textY;
+    this.multiplierText.x = third + 6;
+    this.multiplierText.y = textY;
+    this.winText.x = third * 2 + 6;
+    this.winText.y = textY;
   }
 }
 

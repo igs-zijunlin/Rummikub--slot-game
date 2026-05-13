@@ -6,6 +6,8 @@ export class HUD {
   private betText!: Text;
   private winText!: Text;
   private spinBtn!: Container;
+  private spinBtnBg!: Graphics;
+  private spinBtnText!: Text;
   private turboBtn!: Container;
   private turboBtnBg!: Graphics;
   private turboBtnText!: Text;
@@ -24,72 +26,44 @@ export class HUD {
   }
 
   private buildUI() {
-    const style = { fontFamily: 'Georgia, serif', fontSize: 18, fill: 0xf5f5dc };
+    const style = { fontFamily: 'Georgia, serif', fontSize: 16, fill: 0xf5f5dc };
 
-    // Balance
     this.balanceText = new Text({ text: '', style });
-    this.balanceText.y = 0;
     this.container.addChild(this.balanceText);
 
-    // Bet
     this.betText = new Text({ text: '', style });
-    this.betText.y = 30;
     this.container.addChild(this.betText);
 
-    // Win
-    this.winText = new Text({ text: '', style: { ...style, fontSize: 22, fill: 0xffd700 } });
-    this.winText.y = 60;
+    this.winText = new Text({ text: '', style: { ...style, fill: 0xffd700 } });
     this.container.addChild(this.winText);
 
-    // Spin button - casino gold style
+    // Spin button
     this.spinBtn = new Container();
-    this.spinBtn.y = 100;
-    const btnBg = new Graphics();
-    // Shadow
-    btnBg.roundRect(3, 3, 160, 50, 25);
-    btnBg.fill({ color: 0x000000, alpha: 0.3 });
-    // Button body
-    btnBg.roundRect(0, 0, 160, 50, 25);
-    btnBg.fill(0xb71c1c);
-    // Gold border
-    btnBg.roundRect(0, 0, 160, 50, 25);
-    btnBg.stroke({ color: 0xffd700, width: 2 });
-    // Top highlight
-    btnBg.roundRect(4, 4, 152, 20, 20);
-    btnBg.fill({ color: 0xffffff, alpha: 0.12 });
-    this.spinBtn.addChild(btnBg);
+    this.spinBtnBg = new Graphics();
+    this.spinBtn.addChild(this.spinBtnBg);
 
-    const btnText = new Text({
+    this.spinBtnText = new Text({
       text: '🎰 旋轉',
-      style: { fontFamily: 'Georgia, serif', fontSize: 22, fontWeight: 'bold', fill: 0xffd700 },
+      style: { fontFamily: 'Georgia, serif', fontSize: 20, fontWeight: 'bold', fill: 0xffd700 },
     });
-    btnText.anchor.set(0.5);
-    btnText.x = 80;
-    btnText.y = 25;
-    this.spinBtn.addChild(btnText);
+    this.spinBtnText.anchor.set(0.5);
+    this.spinBtn.addChild(this.spinBtnText);
 
     this.spinBtn.eventMode = 'static';
     this.spinBtn.cursor = 'pointer';
     this.spinBtn.on('pointerdown', () => this.onSpin());
     this.container.addChild(this.spinBtn);
 
-    // Turbo toggle button - casino style
+    // Turbo button
     this.turboBtn = new Container();
-    this.turboBtn.y = 160;
     this.turboBtnBg = new Graphics();
-    this.turboBtnBg.roundRect(0, 0, 100, 40, 20);
-    this.turboBtnBg.fill(0x2e2e2e);
-    this.turboBtnBg.roundRect(0, 0, 100, 40, 20);
-    this.turboBtnBg.stroke({ color: 0xffd700, width: 1.5, alpha: 0.6 });
     this.turboBtn.addChild(this.turboBtnBg);
 
     this.turboBtnText = new Text({
       text: '⚡ 加速',
-      style: { fontFamily: 'Georgia, serif', fontSize: 15, fontWeight: 'bold', fill: 0xcccccc },
+      style: { fontFamily: 'Georgia, serif', fontSize: 13, fontWeight: 'bold', fill: 0xcccccc },
     });
     this.turboBtnText.anchor.set(0.5);
-    this.turboBtnText.x = 50;
-    this.turboBtnText.y = 20;
     this.turboBtn.addChild(this.turboBtnText);
 
     this.turboBtn.eventMode = 'static';
@@ -102,20 +76,15 @@ export class HUD {
 
   private toggleTurbo() {
     this.turbo = !this.turbo;
-    this.turboBtnBg.clear();
-    this.turboBtnBg.roundRect(0, 0, 100, 40, 20);
-    this.turboBtnBg.fill(this.turbo ? 0xff6600 : 0x2e2e2e);
-    this.turboBtnBg.roundRect(0, 0, 100, 40, 20);
-    this.turboBtnBg.stroke({ color: 0xffd700, width: 1.5, alpha: this.turbo ? 1 : 0.6 });
-    this.turboBtnText.text = this.turbo ? '⚡ 加速 ON' : '⚡ 加速';
+    this.turboBtnText.text = this.turbo ? '⚡ ON' : '⚡ 加速';
     this.turboBtnText.style.fill = this.turbo ? 0xffd700 : 0xcccccc;
     this.onTurboToggle(this.turbo);
   }
 
   updateDisplay() {
-    this.balanceText.text = `💰 餘額：${this.balance}`;
-    this.betText.text = `🎯 下注：${this.bet}`;
-    this.winText.text = this.win > 0 ? `🏆 贏分：+${this.win}` : '';
+    this.balanceText.text = `💰 ${this.balance}`;
+    this.betText.text = `🎯 ${this.bet}`;
+    this.winText.text = this.win > 0 ? `🏆 +${this.win}` : '';
   }
 
   setEnabled(enabled: boolean) {
@@ -124,12 +93,53 @@ export class HUD {
   }
 
   layout(width: number) {
-    // Center the spin button
-    this.spinBtn.x = (width - 160) / 2;
-    // Turbo button to the right of spin button
-    this.turboBtn.x = (width - 100) / 2;
-    this.balanceText.x = 10;
-    this.betText.x = 10;
-    this.winText.x = 10;
+    // Scale factor based on available width (reference: 490px)
+    const s = Math.min(width / 490, 1);
+    const fontSize = Math.max(12, Math.round(16 * s));
+    const btnW = Math.round(140 * s);
+    const btnH = Math.round(44 * s);
+    const turboBtnW = Math.round(80 * s);
+    const turboBtnH = Math.round(34 * s);
+    const lineH = Math.round(24 * s);
+
+    // Text sizing
+    this.balanceText.style.fontSize = fontSize;
+    this.betText.style.fontSize = fontSize;
+    this.winText.style.fontSize = fontSize;
+
+    // Layout: info row on top, buttons below
+    this.balanceText.x = 0;
+    this.balanceText.y = 0;
+    this.betText.x = Math.round(width * 0.35);
+    this.betText.y = 0;
+    this.winText.x = Math.round(width * 0.65);
+    this.winText.y = 0;
+
+    // Spin button
+    const btnY = lineH + 8;
+    this.spinBtn.x = (width - btnW) / 2;
+    this.spinBtn.y = btnY;
+    this.spinBtnBg.clear();
+    this.spinBtnBg.roundRect(2, 2, btnW, btnH, btnH / 2);
+    this.spinBtnBg.fill({ color: 0x000000, alpha: 0.3 });
+    this.spinBtnBg.roundRect(0, 0, btnW, btnH, btnH / 2);
+    this.spinBtnBg.fill(0xb71c1c);
+    this.spinBtnBg.roundRect(0, 0, btnW, btnH, btnH / 2);
+    this.spinBtnBg.stroke({ color: 0xffd700, width: 2 });
+    this.spinBtnText.x = btnW / 2;
+    this.spinBtnText.y = btnH / 2;
+    this.spinBtnText.style.fontSize = Math.max(14, Math.round(20 * s));
+
+    // Turbo button - right of spin
+    this.turboBtn.x = this.spinBtn.x + btnW + 10;
+    this.turboBtn.y = btnY + (btnH - turboBtnH) / 2;
+    this.turboBtnBg.clear();
+    this.turboBtnBg.roundRect(0, 0, turboBtnW, turboBtnH, turboBtnH / 2);
+    this.turboBtnBg.fill(this.turbo ? 0xff6600 : 0x2e2e2e);
+    this.turboBtnBg.roundRect(0, 0, turboBtnW, turboBtnH, turboBtnH / 2);
+    this.turboBtnBg.stroke({ color: 0xffd700, width: 1.5, alpha: 0.6 });
+    this.turboBtnText.x = turboBtnW / 2;
+    this.turboBtnText.y = turboBtnH / 2;
+    this.turboBtnText.style.fontSize = Math.max(10, Math.round(13 * s));
   }
 }

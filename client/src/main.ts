@@ -128,48 +128,48 @@ async function main() {
     const w = app.screen.width;
     const h = app.screen.height;
     const isPortrait = h > w;
+    const isSmall = w < 400;
 
     const machineW = machine.width;
     const machineH = machine.height;
 
-    // Scale to fit
-    const maxW = w * 0.85;
-    const maxH = h * (isPortrait ? 0.45 : 0.55);
+    // Scale to fit — more aggressive on small screens
+    const maxW = w * (isSmall ? 0.95 : 0.85);
+    const maxH = h * (isPortrait ? 0.40 : 0.50);
     const scale = Math.min(maxW / machineW, maxH / machineH, 1.5);
 
     machine.container.scale.set(scale);
     const scaledW = machineW * scale;
     const scaledH = machineH * scale;
 
-    // Position title
+    // Title — scale with screen
+    const titleSize = Math.max(16, Math.min(isPortrait ? 22 : 26, w * 0.06));
     title.x = w / 2;
-    title.y = isPortrait ? 20 : 10;
-    title.style.fontSize = isPortrait ? 24 : 28;
+    title.y = isSmall ? 8 : (isPortrait ? 16 : 10);
+    title.style.fontSize = titleSize;
 
     // Position machine centered
-    const titleBottom = title.y + 50;
+    const titleBottom = title.y + titleSize + 12;
     machine.container.x = (w - scaledW) / 2;
-    machine.container.y = titleBottom + (isPortrait ? 10 : 5);
+    machine.container.y = titleBottom;
 
-    // Draw decorative gold frame around machine area
-    const pad = 16;
+    // Draw decorative gold frame
+    const pad = isSmall ? 8 : 16;
     const fx = machine.container.x - pad;
     const fy = machine.container.y - pad;
     const fw = scaledW + pad * 2;
     const fh = scaledH + pad * 2;
 
     frame.clear();
-    frame.roundRect(fx - 4, fy - 4, fw + 8, fh + 8, 14);
+    frame.roundRect(fx - 2, fy - 2, fw + 4, fh + 4, 12);
     frame.fill({ color: 0xffd700, alpha: 0.1 });
     frame.roundRect(fx, fy, fw, fh, 10);
     frame.fill({ color: 0x0a2e0a, alpha: 0.6 });
     frame.roundRect(fx, fy, fw, fh, 10);
-    frame.stroke({ color: 0xffd700, width: 3, alpha: 0.8 });
-    frame.roundRect(fx + 6, fy + 6, fw - 12, fh - 12, 6);
-    frame.stroke({ color: 0xffd700, width: 1, alpha: 0.3 });
+    frame.stroke({ color: 0xffd700, width: 2, alpha: 0.8 });
 
     // Position HUD below machine
-    const hudY = machine.container.y + scaledH + 30;
+    const hudY = machine.container.y + scaledH + (isSmall ? 12 : 24);
     hud.container.x = (w - scaledW) / 2;
     hud.container.y = hudY;
     hud.layout(scaledW);
@@ -178,12 +178,13 @@ async function main() {
     fgController.updateLayout(w, h, (w - scaledW) / 2, machine.container.y, scaledW);
 
     // Cheat button 右上角
-    cheatBtn.x = w - 30;
-    cheatBtn.y = 5;
+    cheatBtn.x = w - 26;
+    cheatBtn.y = 4;
 
     // Version info 左下角
-    versionText.x = 5;
-    versionText.y = h - 16;
+    versionText.style.fontSize = isSmall ? 8 : 10;
+    versionText.x = 4;
+    versionText.y = h - 14;
   }
 
   resize();
