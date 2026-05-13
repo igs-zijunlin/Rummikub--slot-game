@@ -114,21 +114,24 @@ export async function playChainMultiplierAnim(
   cascadeCount: number,
   shakeTarget: Container,
 ): Promise<void> {
+  const pw = parent.width || 500;
+  const rs = (px: number) => Math.round(px * Math.min(pw / 500, 1));
+
   // Multiplier text popup
   const multText = new Text({
     text: `×${multiplier}`,
     style: {
       fontFamily: 'Georgia, serif',
-      fontSize: 48,
+      fontSize: rs(48),
       fontWeight: 'bold',
       fill: cascadeCount >= 4 ? 0xff4444 : 0xffd700,
-      stroke: { color: 0x000000, width: 4 },
+      stroke: { color: 0x000000, width: rs(4) },
       dropShadow: { color: 0x000000, blur: 4, distance: 2, alpha: 0.6 },
     },
   });
   multText.anchor.set(0.5);
-  multText.x = parent.width / 2;
-  multText.y = parent.height / 2;
+  multText.x = pw / 2;
+  multText.y = (parent.height || 400) / 2;
   multText.scale.set(0);
   multText.alpha = 0;
   parent.addChild(multText);
