@@ -5,7 +5,7 @@ const SFX_PATH = `${BASE}audio/sfx/`;
 const BGM_PATH = `${BASE}audio/bgm/`;
 
 const SFX_LIST = [
-  'spin-start', 'reel-spin', 'reel-stop',
+  'spin-start', 'reel-stop',
   'win-small', 'win-medium', 'win-big',
   'scatter-land', 'trigger', 'break', 'fall',
   'cascade', 'golden-joker', 'perfect', 'run8',
