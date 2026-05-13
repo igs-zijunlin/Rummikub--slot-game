@@ -11,6 +11,8 @@ export async function playTriggerScreen(
   const overlay = new Container();
   parent.addChild(overlay);
 
+  const rs = (px: number) => Math.round(px * Math.min(screenW / 500, 1));
+
   // Dark backdrop
   const bg = new Graphics();
   bg.rect(0, 0, screenW, screenH);
@@ -22,11 +24,13 @@ export async function playTriggerScreen(
     text: '🎰 FREE GAME',
     style: {
       fontFamily: 'Georgia, serif',
-      fontSize: 52,
+      fontSize: rs(52),
       fontWeight: 'bold',
       fill: 0xffd700,
-      stroke: { color: 0x8b0000, width: 5 },
+      stroke: { color: 0x8b0000, width: rs(5) },
       dropShadow: { color: 0x000000, blur: 8, distance: 4, alpha: 0.7 },
+      wordWrap: true,
+      wordWrapWidth: screenW * 0.9,
     },
   });
   freeText.anchor.set(0.5);
@@ -41,7 +45,7 @@ export async function playTriggerScreen(
     text: `${rounds} 回合`,
     style: {
       fontFamily: 'Georgia, serif',
-      fontSize: 32,
+      fontSize: rs(32),
       fontWeight: 'bold',
       fill: 0xffffff,
       dropShadow: { color: 0x000000, blur: 4, distance: 2, alpha: 0.5 },
@@ -192,6 +196,8 @@ export async function playSettlementScreen(
   const overlay = new Container();
   parent.addChild(overlay);
 
+  const rs = (px: number) => Math.round(px * Math.min(screenW / 500, 1));
+
   // Dark backdrop
   const bg = new Graphics();
   bg.rect(0, 0, screenW, screenH);
@@ -203,10 +209,12 @@ export async function playSettlementScreen(
     text: '🏆 FREE GAME 結算',
     style: {
       fontFamily: 'Georgia, serif',
-      fontSize: 36,
+      fontSize: rs(36),
       fontWeight: 'bold',
       fill: 0xffd700,
-      stroke: { color: 0x000000, width: 3 },
+      stroke: { color: 0x000000, width: rs(3) },
+      wordWrap: true,
+      wordWrapWidth: screenW * 0.9,
     },
   });
   titleText.anchor.set(0.5);
@@ -220,11 +228,13 @@ export async function playSettlementScreen(
     text: '0',
     style: {
       fontFamily: 'Georgia, serif',
-      fontSize: 56,
+      fontSize: rs(56),
       fontWeight: 'bold',
       fill: 0x44ff44,
-      stroke: { color: 0x000000, width: 4 },
+      stroke: { color: 0x000000, width: rs(4) },
       dropShadow: { color: 0x000000, blur: 6, distance: 3, alpha: 0.6 },
+      wordWrap: true,
+      wordWrapWidth: screenW * 0.9,
     },
   });
   winDisplay.anchor.set(0.5);
